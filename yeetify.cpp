@@ -9,6 +9,12 @@ using namespace std;
 void tokenize_file(const string &source, vector<string> &tokens){
     ifstream fin(source+".cpp");
     string token;
+
+    //iterate until #includes or using directives are passed, since >> operator skips whitespace
+    for(fin >> token; token == "#define" || token == "using"; fin >> token){
+        fin.ignore(__INT_MAX__, '\n');
+    }
+
     while(fin >> token){
         tokens.push_back(token);
     }
@@ -27,6 +33,7 @@ int main(int argc, char* argv[]){
     //tokenize the file
     tokenize_file(filename, tokens);
 
+    //determines how many unique permutations of word will be needed
     int num_yeets = tokens.size();
     cout << num_yeets << endl;
 }
