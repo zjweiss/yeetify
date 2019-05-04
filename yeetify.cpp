@@ -1,12 +1,13 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <set>
 #include <map>
-#include <vector>
+#include <algorithm>
 using namespace std;
 
 //Iterates through source code and finds each unique string in file, adding it to the map.
-void tokenize_file(const string &source, vector<string> &tokens){
+void tokenize_file(const string &source, set<string> &tokens){
     ifstream fin(source+".cpp");
     if(!fin.good()){
         throw source;
@@ -19,8 +20,31 @@ void tokenize_file(const string &source, vector<string> &tokens){
     }
 
     while(fin >> token){
-        tokens.push_back(token);
+        tokens.insert(token);
     }
+}
+
+//Generates required number of permutations of the word 'yeet' 
+set<string> generate_yeets(int num_yeets){
+    //we are using std::set because they ensure that words won't be repeated
+    set<string> yeets;
+    while(yeets.size() < num_yeets){
+        string s = "y";
+        int e_count = rand() % (num_yeets / 2);
+        int t_count = (num_yeets / 2) - e_count;
+        //generates unique string and adds to set
+        for(int i = 0; i < e_count; ++i){
+            if(rand() % 2 == 1) s += "e";
+            else s += "E";
+        }
+        for(int i = 0; i < t_count; ++i){
+            if(rand() % 2 == 1) s += "t";
+            else s+= "T";        
+        }
+        yeets.insert(s);
+        cout << s << endl;
+    }
+    return yeets;
 }
 
 int main(int argc, char* argv[]){
@@ -34,7 +58,7 @@ int main(int argc, char* argv[]){
 
     string filename = string(argv[1]);
 
-    vector<string> tokens;
+    set<string> tokens;
     map<string, string> yeet_map;
     //tokenize the file
     try{
@@ -45,6 +69,8 @@ int main(int argc, char* argv[]){
         return 1;
     }
     //determines how many unique permutations of word will be needed
-    int num_yeets = tokens.size();
+    int num_yeets = tokens.size(); //since capitalization
     cout << num_yeets << endl;
+
+    set<string> yeets = generate_yeets(num_yeets);
 }
