@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <cmath>
 using namespace std;
 
 //Iterates through source code and finds each unique string in file, adding it to the map.
@@ -30,8 +31,9 @@ set<string> generate_yeets(int num_yeets){
     set<string> yeets;
     while(yeets.size() < num_yeets){
         string s = "y";
-        int e_count = rand() % (num_yeets / 2);
-        int t_count = (num_yeets / 2) - e_count;
+        int rand_length = rand() % ((int)log2(num_yeets)) + 1;
+        int t_count = rand() % (rand_length);
+        int e_count = rand_length - t_count;
         //generates unique string and adds to set
         for(int i = 0; i < e_count; ++i){
             if(rand() % 2 == 1) s += "e";
@@ -42,7 +44,6 @@ set<string> generate_yeets(int num_yeets){
             else s+= "T";        
         }
         yeets.insert(s);
-        cout << s << endl;
     }
     return yeets;
 }
