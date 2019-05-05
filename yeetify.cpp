@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <set>
 #include <map>
 #include <algorithm>
@@ -48,6 +49,26 @@ set<string> generate_yeets(int num_yeets){
     return yeets;
 }
 
+void yeetify_file(const string &source, const map<string, string> &map){
+    //create ifstream and ofstrea
+    ifstream fin;
+    fin.open(source+".cpp");
+    ofstream fout;
+    fout.open(source+"_yeetified.cpp");
+
+    //iterate until #includes or using directives are passed, since >> operator skips whitespace
+    string token;
+    for(fin >> token; token == "#define" || token == "using"; fin >> token){
+        fin.ignore(__INT_MAX__, '\n');
+    }
+
+    //now that we're below any directives, create #define mapping from yeets to tokens so the code can actually compile
+    for(auto pair : map){
+        //in reverse order since we want to go from yeet to token during compilation
+        fout << "#define " << pair.second << " " << pair.first << endl;
+    }
+}
+
 int main(int argc, char* argv[]){
 
     //checks inputs and gathers user intent
@@ -60,7 +81,6 @@ int main(int argc, char* argv[]){
     string filename = string(argv[1]);
 
     set<string> tokens;
-    map<string, string> yeet_map;
     //tokenize the file
     try{
         tokenize_file(filename, tokens);
@@ -69,9 +89,25 @@ int main(int argc, char* argv[]){
         cout << "Error reading file: " << s << ".cpp" << endl;
         return 1;
     }
+    
     //determines how many unique permutations of word will be needed
-    int num_yeets = tokens.size(); //since capitalization
-    cout << num_yeets << endl;
+    int num_yeets = tokens.size();
 
+    //gets generated words from generator function
     set<string> yeets = generate_yeets(num_yeets);
+
+    //create map from token to word using iterators over each set
+    map<string, string> yeet_map;
+    int size = tokens.size(); //since we know that yeets and tokens must have same size
+    auto token = tokens.begin(); 
+    auto yeet = yeets.begin();
+    for(int i = 0; i < size; ++i){ //run loop for each element in the tokens set
+        yeet_map[*token] = *yeet;
+        ++token;
+        ++yeet;
+    }
+
+    //now that we have map, we can finally convert each token to its 'yeet' counterpart
+    yeetify_file(filename, yeet_map);
+
 }
