@@ -49,23 +49,38 @@ set<string> generate_yeets(int num_yeets){
     return yeets;
 }
 
-void yeetify_file(const string &source, const map<string, string> &map){
+void yeetify_file(const string &source, map<string, string> &map){
     //create ifstream and ofstrea
     ifstream fin;
     fin.open(source+".cpp");
     ofstream fout;
     fout.open(source+"_yeetified.cpp");
 
-    //iterate until #includes or using directives are passed, since >> operator skips whitespace
+    //keep any skipped lines identical to the way they were before
     string token;
-    for(fin >> token; token == "#define" || token == "using"; fin >> token){
-        fin.ignore(__INT_MAX__, '\n');
+    for(fin >> token; token == "#define" || token == "#include" || token == "using"; fin >> token){
+        string rest_of_line;
+        getline(fin, rest_of_line);
+        fout << token << " " << rest_of_line << endl;
     }
+    fout << endl;
 
     //now that we're below any directives, create #define mapping from yeets to tokens so the code can actually compile
     for(auto pair : map){
         //in reverse order since we want to go from yeet to token during compilation
         fout << "#define " << pair.second << " " << pair.first << endl;
+    }
+    fout << endl;
+
+    //now that the #define exists, convert each token and put it in exactly the same place in the output file
+    string line;
+    while(getline(fin, line)){
+        stringstream line_stream(line);
+        string text;
+        while(line_stream >> text){
+            fout << map[text] << " ";
+        }
+        fout << endl; //allows line breaks to be maintained
     }
 }
 
