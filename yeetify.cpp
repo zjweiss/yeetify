@@ -17,7 +17,7 @@ void tokenize_file(const string &source, set<string> &tokens){
     string token;
 
     //iterate until #includes or using directives are passed, since >> operator skips whitespace
-    for(fin >> token; token == "#define" || token == "using"; fin >> token){
+    for(fin >> token; token == "#define" || token == "#include"|| token == "using"; fin >> token){
         fin.ignore(__INT_MAX__, '\n');
     }
 
