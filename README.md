@@ -4,7 +4,7 @@ Yeetify is a humorous utility meant to turn the entirety of your C++ code into p
 Inspired by [this reddit post](https://www.reddit.com/r/ProgrammerHumor/comments/bgdxwn/yeet/).
 
 ## Usage
-First, the executable must be built, which can be done either by simply calling `make yeetify` if Make is installed, or `g++ yeetify.cpp -o yeetify` if it isn't. To use yeetify, simply call`yeetify path_to_file_without_extension`, assuming your file is a .cpp file. This works best if the file has spaces between each indivual token, but will work as long as there are no multiple-word quotes.
+First, the executable must be built, which can be done either by simply calling `g++ yeetify.cpp -o yeetify` if it isn't. To use yeetify, simply call `yeetify path_to_file_without_extension`, assuming your file is a .cpp file. This works best if the file has spaces between each individual token, but will work as long as there are no multiple-word quotes.
 
 ## How it works
 The program iterates line-by-line, ignoring all `using`, `#define` or `#include` macros. It takes in each unique word/token and pairs it with a randomly generated permutation of the word 'yeet'. It then makes a copy of the original file and replaces each word with its counterpart (again, ignoring all directives).
