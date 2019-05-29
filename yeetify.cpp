@@ -8,9 +8,21 @@
 #include <cmath>
 using namespace std;
 
+//gets name of file from string and returns it
+string get_filename(string filepath){
+    //returns everything starting from the last "."
+    return filepath.substr(0, filepath.find_last_of("."));
+}
+
+//gets extension of file from string and returns it
+string get_extension(string filepath){
+    //returns everything starting from the last "."
+    return filepath.substr(filepath.find_last_of("."));
+}
+
 //Iterates through source code and finds each unique string in file, adding it to the map.
 void tokenize_file(const string &source, set<string> &tokens){
-    ifstream fin(source+".cpp");
+    ifstream fin(source);
     if(!fin.good()){
         throw source;
     }
@@ -52,9 +64,9 @@ set<string> generate_yeets(int num_yeets){
 void yeetify_file(const string &source, map<string, string> &map){
     //create ifstream and ofstrea
     ifstream fin;
-    fin.open(source+".cpp");
+    fin.open(source);
     ofstream fout;
-    fout.open(source+"_yeetified.cpp");
+    fout.open(get_filename(source)+"_yeetified" + get_extension(source));
 
     //keep any skipped lines identical to the way they were before
     string token;
@@ -88,23 +100,28 @@ int main(int argc, char* argv[]){
 
     //checks inputs and gathers user intent
     if(argc != 2){
-        cout << "Usage: ./yeetify.exe FILENAME_NO_EXTENSION" << endl;
+        cout << "Need exactly 1 argument to yeetify command" << endl;
+        cout << "Usage: "<< argv[0] << " FILENAME" << endl;
         return 1;
     }
 
+    if(get_extension(argv[1]) != ".cpp" && get_extension(argv[1]) != ".c" && get_extension(argv[1]) != ".cc"){
+        cout << "Invalid file extension " << get_extension(argv[1]) << endl;
+        cout << "Usage: "<< argv[0] << " FILENAME" << endl;
+        return 1;
+    }
 
-    string filename = string(argv[1]);
-
+    string path = string(argv[1]);
     set<string> tokens;
     //tokenize the file
     try{
-        tokenize_file(filename, tokens);
+        tokenize_file(path, tokens);
     }
-    catch(string s){
-        cout << "Error reading file: " << s << ".cpp" << endl;
+    catch(string invalid_file_path){
+        cout << "Error reading file: " << invalid_file_path << endl;
         return 1;
     }
-    
+
     //determines how many unique permutations of word will be needed
     int num_yeets = tokens.size();
 
@@ -123,6 +140,6 @@ int main(int argc, char* argv[]){
     }
 
     //now that we have map, we can finally convert each token to its 'yeet' counterpart
-    yeetify_file(filename, yeet_map);
+    yeetify_file(path, yeet_map);
 
 }
