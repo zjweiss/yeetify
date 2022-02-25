@@ -96,22 +96,44 @@ void yeetify_file(const string& source, map<string, string>& map) {
 	}
 }
 
-int main(int argc, char* argv[]) {
+void checkValidCommandLineArgs(int argc, char* argv[])
+{
 	//checks inputs and gathers user intent
 	if (argc != 2) {
 		cout << "Need exactly 1 argument to yeetify command" << endl;
 		cout << "Usage: " << argv[0] << " FILENAME" << endl;
-		return 1;
+		exit(1);
 	}
 
 	if (get_extension(argv[1]) != ".cpp" && get_extension(argv[1]) != ".c" && get_extension(argv[1]) != ".cc") {
 		cout << "Invalid file extension " << get_extension(argv[1]) << endl;
 		cout << "Usage: " << argv[0] << " FILENAME" << endl;
-		return 1;
+		exit(1);
 	}
+}
+
+map<string, string> generate_yeet_map(set<string> tokens, set<string> yeets)
+{
+	map<string, string> yeet_map;
+
+	int size = tokens.size(); //since we know that yeets and tokens must have same size
+	auto token = tokens.begin();
+	auto yeet = yeets.begin();
+	for (int i = 0; i < size; ++i) { //run loop for each element in the tokens set
+		yeet_map[*token] = *yeet;
+		++token;
+		++yeet;
+	}
+
+	return yeet_map;
+}
+
+int main(int argc, char* argv[]) {
+	checkValidCommandLineArgs(argc, argv);
 
 	string path = string(argv[1]);
 	set<string> tokens;
+
 	//tokenize the file
 	try {
 		tokenize_file(path, tokens);
@@ -128,15 +150,7 @@ int main(int argc, char* argv[]) {
 	set<string> yeets = generate_yeets(num_yeets);
 
 	//create map from token to word using iterators over each set
-	map<string, string> yeet_map;
-	int size = tokens.size(); //since we know that yeets and tokens must have same size
-	auto token = tokens.begin();
-	auto yeet = yeets.begin();
-	for (int i = 0; i < size; ++i) { //run loop for each element in the tokens set
-		yeet_map[*token] = *yeet;
-		++token;
-		++yeet;
-	}
+	map<string, string> yeet_map = generate_yeet_map(tokens, yeets);
 
 	//now that we have map, we can finally convert each token to its 'yeet' counterpart
 	yeetify_file(path, yeet_map);
